@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://ng4l7hlalck0"]
+
+[ext_resource type="Texture2D" uid="uid://c7gx8wh74cear" path="res://art/car.png" id="1_e2ty2"]
+[ext_resource type="Script" path="res://car.gd" id="1_ybh8d"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lli3s"]
+bounce = 0.5
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vywh8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_e2ty2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_isvwl"]
+size = Vector2(160, 144)
+
+[node name="Car" type="RigidBody2D"]
+mass = 10.0
+physics_material_override = SubResource("PhysicsMaterial_lli3s")
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_ybh8d")
+speed = 400
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+rotation = 1.5708
+scale = Vector2(10, 10)
+sprite_frames = SubResource("SpriteFrames_vywh8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_isvwl")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]

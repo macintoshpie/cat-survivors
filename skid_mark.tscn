@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://44kh8alhtitg"]
+
+[ext_resource type="Texture2D" uid="uid://bgv5rv5nrotvu" path="res://art/skid.png" id="1_v2pkx"]
+
+[node name="SkidMark" type="Sprite2D"]
+scale = Vector2(10, 10)
+texture = ExtResource("1_v2pkx")

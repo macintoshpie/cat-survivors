@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=4 uid="uid://dldlixh6e8x5h"]
+
+[ext_resource type="Texture2D" uid="uid://bxo5qb5g2o645" path="res://art/simpletilesheet.png" id="1_y4y4f"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_qrc24"]
+texture = ExtResource("1_y4y4f")
+texture_region_size = Vector2i(64, 64)
+1:0/next_alternative_id = 3
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, -32, 32)
+1:0/1 = 1
+1:0/1/flip_h = true
+1:0/1/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32)
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+0:0/next_alternative_id = 4
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, 0, 32, 0, 32, 32, -32, 32)
+0:0/1 = 1
+0:0/1/flip_v = true
+0:0/1/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 0, -32, 0)
+0:0/2 = 2
+0:0/2/flip_h = true
+0:0/2/transpose = true
+0:0/2/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 0, -32, 0, 32, -32, 32)
+
+[sub_resource type="TileSet" id="TileSet_wec2c"]
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_qrc24")
+
+[node name="SimpleTileMapLayer" type="TileMapLayer"]
+tile_map_data = PackedByteArray("AAD//wIAAAAAAAAAAAD+/wIAAAAAAAAAAgD+/wEAAAAAAAAAAgD+/wAAAAAAAAAAAgD+////AAAAAAAAAgD+//7/AAAAAAAAAgD///3/AAAAAAAAAQAAAP3/AAAAAAAAAQABAP3/AAAAAAAAAQACAP3/AAAAAAAAAQADAP3/AAABAAAAAQADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAACAAIAAAAAAAAAAAABAAIAAAAAAAAAAAAAAAIAAAAAAAAAAAD+//3/AAAAAAAAAQA=")
+tile_set = SubResource("TileSet_wec2c")
+collision_visibility_mode = 1
