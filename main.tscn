@@ -24,7 +24,7 @@ offset_left = -11984.0
 offset_top = -10232.0
 offset_right = 20632.0
 offset_bottom = 15792.0
-color = Color(0.823924, 0.823924, 0.823924, 1)
+color = Color(0.910255, 0.775851, 0.891903, 1)
 
 [node name="Map" type="TileMapLayer" parent="."]
 tile_set = ExtResource("2_v1q26")
@@ -32,7 +32,7 @@ tile_set = ExtResource("2_v1q26")
 [node name="Car" parent="." instance=ExtResource("1_8tpw2")]
 z_index = 1
 rotation = -1.5708
-speed = 10000
+speed = 80000
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
 zoom = Vector2(0.25, 0.25)

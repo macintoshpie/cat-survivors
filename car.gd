@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-@export var speed: int = 10000
+@export var speed: int = 80000
 @export var turn_speed: int = 40
 @export var turn_speed_2: int = 1000000
 
@@ -36,7 +36,7 @@ func _physics_process(delta: float) -> void:
 	var forward_speed = velocity.dot(forward_vector)
 	var lateral_speed = velocity.dot(sideways_vector)
 	
-	var acceleration_force = 25000  # forward acceleration force
+	var acceleration_force = 40000  # forward acceleration force
 	var reverse_acceleration_factor = 0.5 # reverse acceleration factor to forwards
 	var steering_speed = 2.0       # base steering amount (tuned below)
 	var lateral_friction = 5.0 if is_handbraking else 20.0    # friction to apply to sideways movement
@@ -87,12 +87,16 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	var damage = body.get_meta("damage")
+	var destroyable = body.get_meta("destroyable")
 	prints("Collision...")
 	if damage != null:
 		prints("damage!")
-	else:
-		hit_wall.emit()
-		leave_skid_mark()
+	
+	if destroyable:
+		body.queue_free()
+
+	hit_wall.emit()
+	leave_skid_mark()
 
 func leave_skid_mark() -> void:
 	# instantiate the skid mark scene

@@ -3,12 +3,13 @@ extends Node
 var straight_scene = preload("res://straight.tscn") as PackedScene
 var curve_scene = preload("res://curve.tscn") as PackedScene
 var obstacle_scene = preload("res://obstacle.tscn") as PackedScene
+var coin_scene = preload("res://coin.tscn") as PackedScene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	$Car/Music.play()
 	var prev_point = Vector2()  # start with an empty vector
-	var p_width = 15
+	var p_width = 20
 	
 	## shift points around a bit using random offset
 	#var shift_amount = 20
@@ -32,6 +33,7 @@ func _ready() -> void:
 	var curve_start = Vector2(-128, -128)
 	var da_path = $Path2D
 	var obstacle_frequency = 0.05
+	var coin_frequency = 0.1
 	# render the baked result
 	for i in range(1, da_path.curve.get_baked_points().size()):  # start from 1 to skip the first invalid prev_point
 		var p = da_path.curve.get_baked_points()[i]
@@ -51,8 +53,13 @@ func _ready() -> void:
 		
 		if randf() < obstacle_frequency:
 			var obstacle: RigidBody2D = obstacle_scene.instantiate()
-			obstacle.position = (p + curve_start) * 64 
+			var random_offset = Vector2(randf_range(-p_width, p_width), randf_range(-p_width, p_width))
+			obstacle.position = (p + curve_start + random_offset) * 64
 			add_child(obstacle)
+		elif randf() < coin_frequency:
+			var coin: RigidBody2D = coin_scene.instantiate()
+			coin.position = (p + curve_start) * 64 
+			add_child(coin)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
