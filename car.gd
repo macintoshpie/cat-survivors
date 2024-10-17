@@ -87,6 +87,7 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	var damage = body.get_meta("damage")
+	prints("Collision...")
 	if damage != null:
 		prints("damage!")
 	else:
@@ -109,3 +110,7 @@ func leave_skid_mark() -> void:
 	skid_mark.self_modulate = Color(0, 0, 0, float(drift_count) / float(drift_count_max))
 	# add the skid mark to the scene tree
 	get_parent().add_child(skid_mark)
+
+
+func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) -> void:
+	prints("Body shape entered")

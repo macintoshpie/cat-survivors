@@ -2,6 +2,7 @@ extends Node
 
 var straight_scene = preload("res://straight.tscn") as PackedScene
 var curve_scene = preload("res://curve.tscn") as PackedScene
+var obstacle_scene = preload("res://obstacle.tscn") as PackedScene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -26,8 +27,11 @@ func _ready() -> void:
 		#var v1 = (p - pp).normalized()  # direction vector from prev to current point
 		#var pdist = abs((p - pp).length()) / 5
 		#$Path2D2.curve.set_point_out(i, v1 * pdist)
-	
+
+	# curve_start is the negative x,y of the first point in the path
+	var curve_start = Vector2(-128, -128)
 	var da_path = $Path2D
+	var obstacle_frequency = 0.05
 	# render the baked result
 	for i in range(1, da_path.curve.get_baked_points().size()):  # start from 1 to skip the first invalid prev_point
 		var p = da_path.curve.get_baked_points()[i]
@@ -38,11 +42,17 @@ func _ready() -> void:
 		var perpendicular = Vector2(-v1.y, v1.x).normalized()  # correct perpendicular calculation
 
 		# draw the block on both sides of the point
-		$Map.set_cell(Vector2i(p + perpendicular * p_width), 0, Vector2i(0, 1), 0)
-		$Map.set_cell(Vector2i(p - perpendicular * p_width), 0, Vector2i(0, 1), 0)
-		
+		var d1 = p + perpendicular * p_width + (curve_start)
+		var d2 = p - perpendicular * p_width + (curve_start)
+		$Map.set_cell(Vector2i(d1), 0, Vector2i(0, 1), 0)
+		$Map.set_cell(Vector2i(d2), 0, Vector2i(0, 1), 0)
+				
 		prev_point = p
-
+		
+		if randf() < obstacle_frequency:
+			var obstacle: RigidBody2D = obstacle_scene.instantiate()
+			obstacle.position = (p + curve_start) * 64 
+			add_child(obstacle)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -1,14 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://dw1i6b4ttcx0x"]
+[gd_scene load_steps=4 format=3 uid="uid://dw1i6b4ttcx0x"]
 
-[ext_resource type="Texture2D" uid="uid://c7gx8wh74cear" path="res://art/car.png" id="1_4ax71"]
+[ext_resource type="Script" path="res://obstacle.gd" id="1_gbxxb"]
+[ext_resource type="Texture2D" uid="uid://b7s6d87yqxay0" path="res://art/cone.png" id="2_ioycn"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_lfojd"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1p275"]
+radius = 64.0
+height = 160.0
 
-[node name="Obstacle" type="Area2D"]
+[node name="Obstacle" type="RigidBody2D"]
+gravity_scale = 0.0
+script = ExtResource("1_gbxxb")
 metadata/damage = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_4ax71")
+texture_filter = 1
+scale = Vector2(10, 10)
+texture = ExtResource("2_ioycn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_lfojd")
+position = Vector2(0, 24)
+shape = SubResource("CapsuleShape2D_1p275")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

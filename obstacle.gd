@@ -1,14 +1,16 @@
-extends Path2D
+extends RigidBody2D
 
+signal damage_taken
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#var voo = curve.get_baked_points()
-	#
-	#for x in voo:
-		#prints(voo)
-	pass
+	pass # Replace with function body.
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+
+func _on_body_entered(body: Node2D) -> void:
+	emit_signal("damage_taken")

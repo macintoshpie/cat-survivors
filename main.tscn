@@ -20,11 +20,11 @@ loop = true
 script = ExtResource("1_lipv4")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-offset_left = -2920.0
-offset_top = -3048.0
-offset_right = 10984.0
-offset_bottom = 6064.0
-color = Color(1, 0.479877, 0.229713, 1)
+offset_left = -11984.0
+offset_top = -10232.0
+offset_right = 20632.0
+offset_bottom = 15792.0
+color = Color(0.823924, 0.823924, 0.823924, 1)
 
 [node name="Map" type="TileMapLayer" parent="."]
 tile_set = ExtResource("2_v1q26")
@@ -53,8 +53,7 @@ theme_override_font_sizes/font_size = 59
 text = "PLACEHOLDERRR"
 
 [node name="Path2D" parent="." instance=ExtResource("6_vqkta")]
-position = Vector2(-7680, -6224)
-scale = Vector2(100, 95.145)
+scale = Vector2(1, 0.951)
 
 [connection signal="hit_wall" from="Car" to="." method="_on_car_hit_wall"]
 [connection signal="lap_completed" from="FinishLine" to="." method="_on_finish_line_lap_completed"]
