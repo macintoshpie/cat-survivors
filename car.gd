@@ -7,7 +7,12 @@ extends RigidBody2D
 var skid_mark_scene = preload("res://skid_mark.tscn") as PackedScene
 var screen_size: Vector2 = Vector2.ZERO
 var drift_angle: float = PI / 12
-var is_drifting: bool = false
+var drift_count: int = 0
+var drift_count_max: int = 60 * 3 # 3 seconds?
+var drift_count_min_for_boost: int = 60 * 0.5 # half a second?
+var drift_boost_max: float = 10.0
+var drift_boost_decay: float = 10.0
+var drift_boost_amount: float = 0.0
 
 signal hit_wall
 
@@ -21,6 +26,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
+	var is_handbraking = Input.is_action_pressed("handbrake")
+
 	var velocity = linear_velocity
 	var forward_vector = Vector2(cos(rotation), sin(rotation))
 	var sideways_vector = forward_vector.rotated(PI / 2)  # perpendicular to forward direction
@@ -32,7 +39,7 @@ func _physics_process(delta: float) -> void:
 	var acceleration_force = 25000  # forward acceleration force
 	var reverse_acceleration_factor = 0.5 # reverse acceleration factor to forwards
 	var steering_speed = 2.0       # base steering amount (tuned below)
-	var lateral_friction = 10.0    # friction to apply to sideways movement
+	var lateral_friction = 5.0 if is_handbraking else 20.0    # friction to apply to sideways movement
 
 	# apply lateral friction to reduce sideways sliding
 	var lateral_force = -sideways_vector * lateral_speed * lateral_friction
@@ -58,17 +65,37 @@ func _physics_process(delta: float) -> void:
 			rotation += turn_rate * delta  # turn right based on speed
 
 	# check if the car is sliding enough to leave skid marks
+
 	var skid_threshold = 400
-	if abs(lateral_speed) > skid_threshold:
+	var is_skid = abs(lateral_speed) > skid_threshold
+	if is_skid:
 		leave_skid_mark()
+		
+	#if is_skid and is_handbraking:
+	if is_handbraking:
+		if is_skid:
+			drift_count = clampi(drift_count + 1, 0, drift_count_max)
+	elif drift_count > 0:
+		if drift_count > drift_count_min_for_boost:
+			drift_boost_amount = clampf(drift_count, 0.0, drift_boost_max)
+		drift_count = 0
+	
+	var drift_boost_speed = acceleration_force / 2
+	if drift_boost_amount > 0.0:
+		apply_central_force(forward_vector * drift_boost_speed * drift_boost_amount)
+		drift_boost_amount = lerpf(drift_boost_amount, 0.0, delta*drift_boost_decay)
 
 func _on_body_entered(body: Node2D) -> void:
-	hit_wall.emit()
-	leave_skid_mark()
+	var damage = body.get_meta("damage")
+	if damage != null:
+		prints("damage!")
+	else:
+		hit_wall.emit()
+		leave_skid_mark()
 
 func leave_skid_mark() -> void:
 	# instantiate the skid mark scene
-	var skid_mark = skid_mark_scene.instantiate()
+	var skid_mark: Sprite2D = skid_mark_scene.instantiate()
 	
 	# calculate the back of the car by moving along the car's negative forward vector
 	var offset_distance = 40  # adjust this value to match the length of your car
@@ -78,5 +105,7 @@ func leave_skid_mark() -> void:
 	skid_mark.position = back_position
 	skid_mark.rotation = rotation + PI / 2  # ensure the skid mark is rotated correctly
 	skid_mark.z_index = 0
+	
+	skid_mark.self_modulate = Color(0, 0, 0, float(drift_count) / float(drift_count_max))
 	# add the skid mark to the scene tree
 	get_parent().add_child(skid_mark)

@@ -6,7 +6,43 @@ var curve_scene = preload("res://curve.tscn") as PackedScene
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	$Car/Music.play()
-	generate_random_map()
+	var prev_point = Vector2()  # start with an empty vector
+	var p_width = 15
+	
+	## shift points around a bit using random offset
+	#var shift_amount = 20
+	#for i in range(0, $Path2D2.curve.point_count):
+		#var p = $Path2D2.curve.get_point_position(i)
+		#
+		#var newp = p + Vector2(randf_range(-shift_amount, shift_amount), randf_range(-shift_amount, shift_amount))
+		#$Path2D2.curve.set_point_position(i, newp)
+	#
+	## make it curvy by setting the point out
+	#for i in range(1, $Path2D2.curve.point_count):
+		#var p = $Path2D2.curve.get_point_position(i)
+		#var pp = $Path2D2.curve.get_point_position(i - 1)
+		#
+		## calculate the vector and the perpendicular
+		#var v1 = (p - pp).normalized()  # direction vector from prev to current point
+		#var pdist = abs((p - pp).length()) / 5
+		#$Path2D2.curve.set_point_out(i, v1 * pdist)
+	
+	var da_path = $Path2D
+	# render the baked result
+	for i in range(1, da_path.curve.get_baked_points().size()):  # start from 1 to skip the first invalid prev_point
+		var p = da_path.curve.get_baked_points()[i]
+		prev_point = da_path.curve.get_baked_points()[i - 1]
+
+		# calculate the vector and the perpendicular
+		var v1 = p - prev_point  # direction vector from prev to current point
+		var perpendicular = Vector2(-v1.y, v1.x).normalized()  # correct perpendicular calculation
+
+		# draw the block on both sides of the point
+		$Map.set_cell(Vector2i(p + perpendicular * p_width), 0, Vector2i(0, 1), 0)
+		$Map.set_cell(Vector2i(p - perpendicular * p_width), 0, Vector2i(0, 1), 0)
+		
+		prev_point = p
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
