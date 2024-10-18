@@ -15,6 +15,7 @@ var drift_boost_decay: float = 10.0
 var drift_boost_amount: float = 0.0
 
 signal hit_wall
+signal collected_coin
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -87,13 +88,9 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	var damage = body.get_meta("damage")
-	var destroyable = body.get_meta("destroyable")
 	prints("Collision...")
 	if damage != null:
 		prints("damage!")
-	
-	if destroyable:
-		body.queue_free()
 
 	hit_wall.emit()
 	leave_skid_mark()

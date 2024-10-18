@@ -36,6 +36,8 @@ speed = 80000
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
 zoom = Vector2(0.25, 0.25)
+position_smoothing_speed = 100.0
+drag_vertical_enabled = true
 script = ExtResource("4_3a5j2")
 
 [node name="Music" type="AudioStreamPlayer2D" parent="Car"]
@@ -43,6 +45,7 @@ rotation = 1.5708
 stream = SubResource("AudioStreamOggVorbis_07xs6")
 
 [node name="FinishLine" parent="." instance=ExtResource("4_wlwd5")]
+visible = false
 position = Vector2(104, 0)
 scale = Vector2(15, 10)
 
@@ -55,5 +58,6 @@ text = "PLACEHOLDERRR"
 [node name="Path2D" parent="." instance=ExtResource("6_vqkta")]
 scale = Vector2(1, 0.951)
 
+[connection signal="collected_coin" from="Car" to="FinishLine" method="_on_car_collected_coin"]
 [connection signal="hit_wall" from="Car" to="." method="_on_car_hit_wall"]
 [connection signal="lap_completed" from="FinishLine" to="." method="_on_finish_line_lap_completed"]

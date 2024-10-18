@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://chpcqpt0epe48"]
+
+[ext_resource type="Script" path="res://gate.gd" id="1_k5tve"]
+[ext_resource type="PackedScene" uid="uid://dw1i6b4ttcx0x" path="res://obstacle.tscn" id="2_e7cw8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i3wk5"]
+size = Vector2(144, 20)
+
+[node name="Gate" type="Area2D"]
+script = ExtResource("1_k5tve")
+
+[node name="Line2D" type="Line2D" parent="."]
+
+[node name="Obstacle1" parent="." instance=ExtResource("2_e7cw8")]
+
+[node name="Obstacle2" parent="." instance=ExtResource("2_e7cw8")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_i3wk5")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="Obstacle1" to="." method="_on_obstacle_1_body_entered"]
