@@ -30,7 +30,7 @@ func _physics_process(delta: float) -> void:
 	var is_handbraking = Input.is_action_pressed("handbrake")
 
 	var velocity = linear_velocity
-	var forward_vector = Vector2(cos(rotation), sin(rotation))
+	var forward_vector = Vector2(cos(rotation - PI / 2), sin(rotation - PI / 2))
 	var sideways_vector = forward_vector.rotated(PI / 2)  # perpendicular to forward direction
 
 	# project velocity onto forward and sideways vectors

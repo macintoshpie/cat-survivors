@@ -4,6 +4,8 @@ extends Node
 @export var rotation_angle: float = 0 # in radians
 @export var center: Vector2 = Vector2.ZERO
 
+signal activated
+
 var broken: bool = false
 
 # Called when the node enters the scene tree for the first time.
@@ -32,7 +34,7 @@ func _process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	prints("Body", body.name)
 	if body.name == "Car":
 		broken = true
 		$Line2D.hide()
+		emit_signal("activated")

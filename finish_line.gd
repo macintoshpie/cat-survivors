@@ -1,5 +1,6 @@
 extends Area2D
 
+signal time_passed(time: float)
 signal lap_completed(time: float)
 var time_since_last_lap: float = 0
 
@@ -11,7 +12,10 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	time_since_last_lap += delta
+	time_passed.emit(time_since_last_lap)
 
+func add_time(t: float) -> void:
+	time_since_last_lap += t
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.name == "Car":

@@ -32,7 +32,6 @@ metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
-rotation = 1.5708
 scale = Vector2(10, 10)
 sprite_frames = SubResource("SpriteFrames_vywh8")
 

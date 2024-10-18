@@ -6,6 +6,9 @@ var obstacle_scene = preload("res://obstacle.tscn") as PackedScene
 var coin_scene = preload("res://coin.tscn") as PackedScene
 var gate_scene = preload("res://gate.tscn") as PackedScene
 
+var current_lap_time: float = 0
+var lap_times: Array[float] = []
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#$Car/Music.play()
@@ -68,13 +71,16 @@ func _ready() -> void:
 			gate.center = (p + curve_start) * 64
 			gate.rotation_angle = perpendicular.angle()
 			add_child(gate)
+			gate.connect("activated", _on_gate_activated)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	$CanvasLayer/LastLap.text = "Current: " + str(snapped(current_lap_time, 0.1))
+	for i in range(lap_times.size()):
+		$CanvasLayer/LastLap.text += "\nLap " + str(i + 1) + ": " + str(snapped(lap_times[i], 0.1))
 
 func _on_finish_line_lap_completed(time: float) -> void:
-	$LastLap.text = str(time)
+	lap_times.push_back(time)
 
 
 func _on_car_hit_wall() -> void:
@@ -177,3 +183,11 @@ func render_map_section(section_type: int, pos: Vector2, rot: float):
 			var final_angle = rot + PI / 2  # quarter-circle rotation
 			var end_pos = pos + Vector2(sin(final_angle), cos(final_angle)).normalized() * curve_radius
 			return [end_pos, final_angle]
+
+func _on_gate_activated():
+	$FinishLine.add_time(-0.5)
+
+
+# tbh this should probably just be tracked by the main game itself...
+func _on_finish_line_time_passed(time: float) -> void:
+	current_lap_time = time

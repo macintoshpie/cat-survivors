@@ -21,9 +21,9 @@ script = ExtResource("1_lipv4")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_left = -11984.0
-offset_top = -10232.0
+offset_top = -10224.0
 offset_right = 20632.0
-offset_bottom = 15792.0
+offset_bottom = 15800.0
 color = Color(0.910255, 0.775851, 0.891903, 1)
 
 [node name="Map" type="TileMapLayer" parent="."]
@@ -31,7 +31,6 @@ tile_set = ExtResource("2_v1q26")
 
 [node name="Car" parent="." instance=ExtResource("1_8tpw2")]
 z_index = 1
-rotation = -1.5708
 speed = 80000
 
 [node name="Camera2D" type="Camera2D" parent="Car"]
@@ -49,15 +48,18 @@ visible = false
 position = Vector2(104, 0)
 scale = Vector2(15, 10)
 
-[node name="LastLap" type="Label" parent="."]
+[node name="Path2D" parent="." instance=ExtResource("6_vqkta")]
+scale = Vector2(1, 0.951)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="LastLap" type="Label" parent="CanvasLayer"]
 offset_right = 490.0
 offset_bottom = 82.0
 theme_override_font_sizes/font_size = 59
 text = "PLACEHOLDERRR"
 
-[node name="Path2D" parent="." instance=ExtResource("6_vqkta")]
-scale = Vector2(1, 0.951)
-
 [connection signal="collected_coin" from="Car" to="FinishLine" method="_on_car_collected_coin"]
 [connection signal="hit_wall" from="Car" to="." method="_on_car_hit_wall"]
 [connection signal="lap_completed" from="FinishLine" to="." method="_on_finish_line_lap_completed"]
+[connection signal="time_passed" from="FinishLine" to="." method="_on_finish_line_time_passed"]
