@@ -34,7 +34,7 @@ func _ready() -> void:
 		#$Path2D2.curve.set_point_out(i, v1 * pdist)
 
 	# curve_start is the negative x,y of the first point in the path
-	var curve_start = Vector2(-128, -128)
+	var curve_start = null
 	var da_path = $Path2D
 	var obstacle_frequency = 0.05
 	var coin_frequency = 0.1
@@ -42,6 +42,11 @@ func _ready() -> void:
 	for i in range(1, da_path.curve.get_baked_points().size()):  # start from 1 to skip the first invalid prev_point
 		var p = da_path.curve.get_baked_points()[i]
 		prev_point = da_path.curve.get_baked_points()[i - 1]
+		
+		if curve_start == null:
+			prints("start")
+			prints(p)
+			curve_start = p * -1
 
 		# calculate the vector and the perpendicular
 		var v1 = p - prev_point  # direction vector from prev to current point

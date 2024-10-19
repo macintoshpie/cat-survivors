@@ -44,7 +44,6 @@ rotation = 1.5708
 stream = SubResource("AudioStreamOggVorbis_07xs6")
 
 [node name="FinishLine" parent="." instance=ExtResource("4_wlwd5")]
-visible = false
 position = Vector2(104, 0)
 scale = Vector2(15, 10)
 
