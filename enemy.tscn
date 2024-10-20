@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://lvicr1nbu8cq"]
+
+[ext_resource type="Script" path="res://enemy.gd" id="1_dlms2"]
+[ext_resource type="Texture2D" uid="uid://b7s6d87yqxay0" path="res://art/cone.png" id="1_eko82"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_acy1t"]
+size = Vector2(136, 160)
+
+[node name="Enemy" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_dlms2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-4, 24)
+shape = SubResource("RectangleShape2D_acy1t")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(10, 10)
+texture = ExtResource("1_eko82")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

@@ -1,10 +1,24 @@
 extends RigidBody2D
+class_name Car
 
 @export var speed: int = 80000
 @export var turn_speed: int = 40
 @export var turn_speed_2: int = 1000000
 
+var enemies: Array[Enemy] = [] 
+var health = 100
+
+# gun attributes
+var shoot_interval: float = 1.0
+var bullet_damage: float = 10.0
+
+# drift_blast attributes
+var blast_scale: float = 1.0
+var drift_blast_damage: float = 20
+
 var skid_mark_scene = preload("res://skid_mark.tscn") as PackedScene
+var bullet_scene = preload("res://bullet.tscn") as PackedScene
+
 var screen_size: Vector2 = Vector2.ZERO
 var drift_angle: float = PI / 12
 var drift_count: int = 0
@@ -22,11 +36,17 @@ func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	prints("Hello world!!")
 	linear_damp = 1.0
-	#angular_damp = 0.3
+	
+	# setup gun
+	$Gun/ShootTimer.wait_time = shoot_interval
+	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
+	# we should not do it this way, but im too lazy rn to figure out the correct way to show short animation
+	$DriftBlast/BlastRadius/BlastImage.hide()
+	
 	var is_handbraking = Input.is_action_pressed("handbrake")
 
 	var velocity = linear_velocity
@@ -39,7 +59,7 @@ func _physics_process(delta: float) -> void:
 	
 	var acceleration_force = 40000  # forward acceleration force
 	var reverse_acceleration_factor = 0.5 # reverse acceleration factor to forwards
-	var steering_speed = 2.0       # base steering amount (tuned below)
+	var steering_speed = 3.0       # base steering amount (tuned below)
 	var lateral_friction = 5.0 if is_handbraking else 20.0    # friction to apply to sideways movement
 
 	# apply lateral friction to reduce sideways sliding
@@ -78,7 +98,15 @@ func _physics_process(delta: float) -> void:
 			drift_count = clampi(drift_count + 1, 0, drift_count_max)
 	elif drift_count > 0:
 		if drift_count > drift_count_min_for_boost:
+			$DriftBlast/BlastRadius/BlastImage.show()
 			drift_boost_amount = clampf(drift_count, 0.0, drift_boost_max)
+			for area in $DriftBlast/BlastRadius.get_overlapping_areas():
+				if !is_instance_of(area, Enemy):
+					continue
+
+				var enemy: Enemy = area
+				enemy.do_damage(drift_blast_damage)
+
 		drift_count = 0
 	
 	var drift_boost_speed = acceleration_force / 2
@@ -112,6 +140,51 @@ func leave_skid_mark() -> void:
 	# add the skid mark to the scene tree
 	get_parent().add_child(skid_mark)
 
-
 func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) -> void:
 	prints("Body shape entered")
+
+func _on_timer_timeout() -> void:
+	var closest_enemy = null
+	var dist = INF
+	for enemy in enemies:
+		var enemy_dist = enemy.position.distance_to(position)
+		if enemy_dist < dist:
+			closest_enemy = enemy
+			dist = enemy_dist
+	
+	if closest_enemy:
+		shoot_at_enemy(closest_enemy)
+
+func shoot_at_enemy(enemy: Enemy):
+	var bullet: Bullet = bullet_scene.instantiate()
+	bullet.position = position
+	bullet.direction = position.direction_to(enemy.position)
+	bullet.damage = bullet_damage
+
+	get_parent().add_child(bullet)
+
+
+
+func _on_shoot_range_area_entered(area: Area2D) -> void:
+	print("Starting to shoot at:")
+	print(area)
+	if is_instance_of(area, Enemy):
+		enemies.append(area)
+
+func _on_shoot_range_area_exited(area: Area2D) -> void:
+	enemies = enemies.filter(func(enemy: Enemy):
+		return enemy.get_instance_id() != area.get_instance_id()
+	)
+
+func _on_hit_box_area_area_entered(area: Area2D) -> void:
+	if is_instance_of(area, Enemy):
+		var enemy: Enemy = area
+		health -= enemy.damage
+
+func upgrade(shoot_interval_fraction: float, bullet_damage_fraction: float, blast_scale_fraction: float) -> void:
+	shoot_interval = shoot_interval * shoot_interval_fraction
+	bullet_damage = bullet_damage * bullet_damage_fraction
+	blast_scale = blast_scale * blast_scale_fraction
+
+	$Gun/ShootTimer.wait_time = shoot_interval
+	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)

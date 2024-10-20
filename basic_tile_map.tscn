@@ -1,34 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://w77k8d2si641"]
+[gd_scene load_steps=2 format=3 uid="uid://w77k8d2si641"]
 
-[ext_resource type="Texture2D" uid="uid://cgnllfhrp7hof" path="res://art/simple-tileset.png" id="1_yd7ab"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fuuqp"]
-texture = ExtResource("1_yd7ab")
-texture_region_size = Vector2i(64, 64)
-0:0/next_alternative_id = 2
-0:0/0 = 0
-0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, -32, -32, -28, -32, -27.875, 32, -32, 32)
-0:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(28.25, -32, 32, -32, 32, 32, 27.7539, 32)
-0:0/1 = 1
-0:0/1/transpose = true
-0:0/1/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, -28.1875, -32, -28.1875)
-0:0/1/physics_layer_0/polygon_1/points = PackedVector2Array(-32, 28.3125, 32, 28.3125, 32, 32, -32, 32)
-1:0/0 = 0
-2:0/next_alternative_id = 3
-2:0/0 = 0
-2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, 28.3125, -28.25, 28.5625, -28, 32, -32, 32)
-2:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(-32, -26.625, -5, -24.5, 11, -20.75, 26, -1.25, 26.75, 32, 32, 32, 32, -32, -32, -32)
-2:0/1 = 1
-2:0/1/flip_h = true
-2:0/1/physics_layer_0/polygon_0/points = PackedVector2Array(-32, 32, -28.2843, 32, -27.0468, -0.795494, -17.3241, -15.8215, -4.06586, -24.4836, 32, -26.9585, 32, -32, -32, -32)
-2:0/1/physics_layer_0/polygon_1/points = PackedVector2Array(28.1075, 28.1959, 27.9307, 32, 32, 32, 32, 28.7262)
-2:0/2 = 2
-2:0/2/transpose = true
-
-[sub_resource type="TileSet" id="TileSet_hxtsu"]
-tile_size = Vector2i(64, 64)
-physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_fuuqp")
+[ext_resource type="TileSet" uid="uid://dcm2t1vv5j7mi" path="res://basic_tile_map.tres" id="1_tgikv"]
 
 [node name="BasicTileMap" type="TileMapLayer"]
-tile_set = SubResource("TileSet_hxtsu")
+tile_set = ExtResource("1_tgikv")
