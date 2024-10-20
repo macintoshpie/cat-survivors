@@ -18,3 +18,9 @@ shape = SubResource("CircleShape2D_hhrfr")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(2, 2)
 texture = ExtResource("1_jkago")
+
+[node name="Despawn" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[connection signal="timeout" from="Despawn" to="." method="_on_despawn_timeout"]

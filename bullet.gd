@@ -8,7 +8,11 @@ var damage = 10
 func _ready():
 	# ensure the bullet moves in the correct direction
 	#direction = get_global_transform().x.normalized()
-	pass
+	$Despawn.start()
 
 func _process(delta):
 	position += direction * speed * delta
+
+
+func _on_despawn_timeout() -> void:
+	queue_free()
