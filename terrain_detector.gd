@@ -43,3 +43,7 @@ func _process_terrain_type(terrain_type: int):
 			friction = 0.25
 	
 	friction_changed.emit(friction)
+
+
+func _on_body_shape_exited(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
+	friction_changed.emit(1.0)

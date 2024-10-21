@@ -113,4 +113,5 @@ shape = SubResource("RectangleShape2D_1tsoi")
 [connection signal="timeout" from="RadialGun/ShootTimer" to="RadialGun" method="_on_shoot_timer_timeout"]
 [connection signal="timeout" from="ForwardGun/ShootTimer" to="ForwardGun" method="_on_shoot_timer_timeout"]
 [connection signal="body_shape_entered" from="TerrainDetector" to="TerrainDetector" method="_on_body_shape_entered"]
+[connection signal="body_shape_exited" from="TerrainDetector" to="TerrainDetector" method="_on_body_shape_exited"]
 [connection signal="friction_changed" from="TerrainDetector" to="." method="_on_terrain_detector_friction_changed"]

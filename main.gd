@@ -30,6 +30,18 @@ func _ready() -> void:
 	var size = get_viewport().size
 	width = size[0]
 	height = size[1]
+	#
+	#var tile_map_layer: TileMapLayer = $TileMapLayer
+	#var texture_image: Image = Image.load_from_file("res://art/roadTextures_tilesheet.png")
+	#var cell_width = 64
+	#var sub_cell_width = 8
+	#for cell_pos in tile_map_layer.get_used_cells():
+		#var cell_atlas_coords = tile_map_layer.get_cell_atlas_coords(cell_pos)
+		#var texture_coords = cell_atlas_coords * cell_width
+		#for x in range(cell_width):
+			#for y in range(cell_width):
+				#var pixel = texture_image.get_pixel(texture_coords[0] + x, texture_coords[1] + y)
+				#print(pixel)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
