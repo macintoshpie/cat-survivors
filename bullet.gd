@@ -11,6 +11,9 @@ func _ready():
 	$Despawn.start()
 
 func _process(delta):
+	_move(delta)
+
+func _move(delta):
 	position += direction * speed * delta
 
 

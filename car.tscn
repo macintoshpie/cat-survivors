@@ -1,7 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://ng4l7hlalck0"]
+[gd_scene load_steps=12 format=3 uid="uid://ng4l7hlalck0"]
 
 [ext_resource type="Texture2D" uid="uid://c7gx8wh74cear" path="res://art/car.png" id="1_e2ty2"]
 [ext_resource type="Script" path="res://car.gd" id="1_ybh8d"]
+[ext_resource type="Script" path="res://gun.gd" id="3_dyoc2"]
+[ext_resource type="PackedScene" uid="uid://vrwuvftwy08v" path="res://bull_horns.tscn" id="5_m8b8c"]
+[ext_resource type="Script" path="res://gun2.gd" id="5_wnsvc"]
+[ext_resource type="Script" path="res://forward_gun.gd" id="6_uqf3u"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lli3s"]
 bounce = 0.5
@@ -41,12 +45,6 @@ speed = 400
 collision_layer = 0
 collision_mask = 4
 
-[node name="BlastImage" type="ColorRect" parent="DriftBlast/BlastRadius"]
-offset_left = -408.0
-offset_right = 408.0
-offset_bottom = 1040.0
-color = Color(0.916311, 0.285251, 3.85046e-07, 0.552941)
-
 [node name="BlastCollision" type="CollisionShape2D" parent="DriftBlast/BlastRadius"]
 position = Vector2(0, 520)
 shape = SubResource("RectangleShape2D_b3fnc")
@@ -67,20 +65,38 @@ collision_mask = 4
 shape = SubResource("RectangleShape2D_isvwl")
 
 [node name="Gun" type="Node2D" parent="."]
+script = ExtResource("3_dyoc2")
 
 [node name="ShootRange" type="Area2D" parent="Gun"]
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Gun/ShootRange"]
+position = Vector2(0, 48)
 shape = SubResource("CircleShape2D_tp0by")
 
 [node name="ShootTimer" type="Timer" parent="Gun"]
-wait_time = 0.25
 autostart = true
+
+[node name="BullHorns" parent="." instance=ExtResource("5_m8b8c")]
+position = Vector2(0, -88)
+
+[node name="RadialGun" type="Node2D" parent="."]
+script = ExtResource("5_wnsvc")
+
+[node name="ShootTimer" type="Timer" parent="RadialGun"]
+autostart = true
+
+[node name="ForwardGun" type="Node2D" parent="."]
+script = ExtResource("6_uqf3u")
+
+[node name="ShootTimer" type="Timer" parent="ForwardGun"]
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]
 [connection signal="area_entered" from="HitBoxArea" to="." method="_on_hit_box_area_area_entered"]
-[connection signal="area_entered" from="Gun/ShootRange" to="." method="_on_shoot_range_area_entered"]
-[connection signal="area_exited" from="Gun/ShootRange" to="." method="_on_shoot_range_area_exited"]
-[connection signal="timeout" from="Gun/ShootTimer" to="." method="_on_timer_timeout"]
+[connection signal="area_entered" from="Gun/ShootRange" to="Gun" method="_on_shoot_range_area_entered"]
+[connection signal="area_exited" from="Gun/ShootRange" to="Gun" method="_on_shoot_range_area_exited"]
+[connection signal="timeout" from="Gun/ShootTimer" to="Gun" method="_on_shoot_timer_timeout"]
+[connection signal="hit" from="BullHorns" to="." method="_on_bull_horns_hit"]
+[connection signal="timeout" from="RadialGun/ShootTimer" to="RadialGun" method="_on_shoot_timer_timeout"]
+[connection signal="timeout" from="ForwardGun/ShootTimer" to="ForwardGun" method="_on_shoot_timer_timeout"]

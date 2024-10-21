@@ -19,7 +19,6 @@ config/icon="res://art/car.png"
 
 window/size/viewport_width=2304
 window/size/viewport_height=1296
-window/size/mode=2
 
 [editor]
 

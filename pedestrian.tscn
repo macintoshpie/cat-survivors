@@ -126,7 +126,8 @@ animations = [{
 }]
 
 [node name="Pedestrian" type="Node2D"]
-scale = Vector2(10, 10)
+texture_filter = 1
+scale = Vector2(20, 20)
 script = ExtResource("1_2ogpb")
 
 [node name="Area2D" type="Area2D" parent="."]

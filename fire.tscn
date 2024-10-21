@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbcn5mbm8r6v6"]
+
+[ext_resource type="Script" path="res://fire.gd" id="1_e6wf0"]
+[ext_resource type="Texture2D" uid="uid://cmrxn8m6gvnno" path="res://art/flame.png" id="1_xm132"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iyy26"]
+size = Vector2(16, 20)
+
+[node name="Fire" type="Node2D"]
+scale = Vector2(8, 8)
+script = ExtResource("1_e6wf0")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_iyy26")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_xm132")
+
+[node name="Despawn" type="Timer" parent="."]
+wait_time = 2.0
+
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="timeout" from="Despawn" to="." method="_on_despawn_timeout"]

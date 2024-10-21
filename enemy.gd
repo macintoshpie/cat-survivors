@@ -1,13 +1,16 @@
 extends Area2D
 class_name Enemy
 
-var speed = 30
+var speed = 20
 var health = 30
 var damage = 10
 
 signal died
 
 @onready var player = $"../Car"
+
+static func is_enemy(area: Area2D) -> bool:
+	return is_instance_of(area, Enemy)
 
 func _physics_process(delta: float) -> void:
 	var velocity = Vector2.ZERO

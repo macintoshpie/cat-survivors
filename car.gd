@@ -5,19 +5,22 @@ class_name Car
 @export var turn_speed: int = 40
 @export var turn_speed_2: int = 1000000
 
-var enemies: Array[Enemy] = [] 
 var health = 100
+var enable_fire = true
 
-# gun attributes
-var shoot_interval: float = 1.0
-var bullet_damage: float = 10.0
+
 
 # drift_blast attributes
 var blast_scale: float = 1.0
 var drift_blast_damage: float = 20
 
+# modifiers, in response to items etc (e.g. bullhorns improve damage resistance)
+var damage_resistance_mod = 0.8 # decrease value to increase resistance
+
+signal dead
+
 var skid_mark_scene = preload("res://skid_mark.tscn") as PackedScene
-var bullet_scene = preload("res://bullet.tscn") as PackedScene
+var fire_scene = preload("res://fire.tscn") as PackedScene
 
 var screen_size: Vector2 = Vector2.ZERO
 var drift_angle: float = PI / 12
@@ -31,22 +34,23 @@ var drift_boost_amount: float = 0.0
 signal hit_wall
 signal collected_coin
 
+func get_current_speed_frac() -> float:
+	# there's probably some smarter way to do this but im dumb
+	# got max by just printing it out. this is fragile
+	var scale = linear_velocity.length()
+	return map_value(scale, 0.0, 4000, 0.0, 1.0)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	prints("Hello world!!")
 	linear_damp = 1.0
-	
-	# setup gun
-	$Gun/ShootTimer.wait_time = shoot_interval
+
 	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
-	# we should not do it this way, but im too lazy rn to figure out the correct way to show short animation
-	$DriftBlast/BlastRadius/BlastImage.hide()
-	
 	var is_handbraking = Input.is_action_pressed("handbrake")
 
 	var velocity = linear_velocity
@@ -98,21 +102,18 @@ func _physics_process(delta: float) -> void:
 			drift_count = clampi(drift_count + 1, 0, drift_count_max)
 	elif drift_count > 0:
 		if drift_count > drift_count_min_for_boost:
-			$DriftBlast/BlastRadius/BlastImage.show()
+			# do the boost
 			drift_boost_amount = clampf(drift_count, 0.0, drift_boost_max)
-			for area in $DriftBlast/BlastRadius.get_overlapping_areas():
-				if !is_instance_of(area, Enemy):
-					continue
-
-				var enemy: Enemy = area
-				enemy.do_damage(drift_blast_damage)
 
 		drift_count = 0
 	
 	var drift_boost_speed = acceleration_force / 2
-	if drift_boost_amount > 0.0:
+	if drift_boost_amount > 0.1:
 		apply_central_force(forward_vector * drift_boost_speed * drift_boost_amount)
 		drift_boost_amount = lerpf(drift_boost_amount, 0.0, delta*drift_boost_decay)
+
+		if randf() < 0.5:
+			add_fire()
 
 func _on_body_entered(body: Node2D) -> void:
 	var damage = body.get_meta("damage")
@@ -143,48 +144,48 @@ func leave_skid_mark() -> void:
 func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) -> void:
 	prints("Body shape entered")
 
-func _on_timer_timeout() -> void:
-	var closest_enemy = null
-	var dist = INF
-	for enemy in enemies:
-		var enemy_dist = enemy.position.distance_to(position)
-		if enemy_dist < dist:
-			closest_enemy = enemy
-			dist = enemy_dist
-	
-	if closest_enemy:
-		shoot_at_enemy(closest_enemy)
-
-func shoot_at_enemy(enemy: Enemy):
-	var bullet: Bullet = bullet_scene.instantiate()
-	bullet.position = position
-	bullet.direction = position.direction_to(enemy.position)
-	bullet.damage = bullet_damage
-
-	get_parent().add_child(bullet)
 
 
-
-func _on_shoot_range_area_entered(area: Area2D) -> void:
-	print("Starting to shoot at:")
-	print(area)
-	if is_instance_of(area, Enemy):
-		enemies.append(area)
-
-func _on_shoot_range_area_exited(area: Area2D) -> void:
-	enemies = enemies.filter(func(enemy: Enemy):
-		return enemy.get_instance_id() != area.get_instance_id()
-	)
 
 func _on_hit_box_area_area_entered(area: Area2D) -> void:
 	if is_instance_of(area, Enemy):
 		var enemy: Enemy = area
-		health -= enemy.damage
+		do_damage(enemy.damage)
 
 func upgrade(shoot_interval_fraction: float, bullet_damage_fraction: float, blast_scale_fraction: float) -> void:
-	shoot_interval = shoot_interval * shoot_interval_fraction
-	bullet_damage = bullet_damage * bullet_damage_fraction
+	# This should be moved into gun probably
+	$Gun.shoot_interval = $Gun.shoot_interval * shoot_interval_fraction
+	$Gun.bullet_damage = $Gun.bullet_damage * bullet_damage_fraction
+	$Gun/ShootTimer.wait_time = $Gun/ShootTimer.wait_time * 0.75
+	
 	blast_scale = blast_scale * blast_scale_fraction
-
-	$Gun/ShootTimer.wait_time = shoot_interval
 	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)
+
+func add_health(amount: float) -> void:
+	health += amount
+
+func add_fire() -> void:
+	var fire: Fire = fire_scene.instantiate()
+	fire.position += Vector2(randi_range(-500, 500), 0)
+	
+	var fire_width = 200
+	var x_offset = Vector2(randi_range(-fire_width, fire_width), 0)
+	fire.position = rotate_around_point(position + x_offset, position, rotation)
+	fire.min_scale = 0.0
+	fire.max_scale = randf_range(4.0, 8.0)
+	fire.duration_secs = randf_range(1, 2)
+	get_parent().add_child(fire)
+
+func _on_bull_horns_hit(enemy: Enemy) -> void:
+	enemy.do_damage(1000)
+
+func map_value(value: float, input_start: float, input_end: float, output_start: float, output_end: float) -> float:
+	return lerp(output_start, output_end, (value - input_start) / (input_end - input_start))
+
+func rotate_around_point(point: Vector2, pivot: Vector2, angle: float) -> Vector2:
+	return (point - pivot).rotated(angle) + pivot
+
+func do_damage(damage: float) -> void:
+	health -= damage * damage_resistance_mod
+	if health <= 0:
+		dead.emit()

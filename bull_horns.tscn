@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://vrwuvftwy08v"]
+
+[ext_resource type="Texture2D" uid="uid://c63lcw8voaxhn" path="res://art/bull_horns.png" id="1_5n117"]
+[ext_resource type="Script" path="res://bull_horns.gd" id="1_jvuhd"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_35n52"]
+size = Vector2(176, 48)
+
+[node name="BullHorns" type="Area2D"]
+script = ExtResource("1_jvuhd")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_35n52")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(10, 10)
+texture = ExtResource("1_5n117")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
