@@ -58,3 +58,5 @@ handbrake={
 
 2d_physics/layer_2="Bullets"
 2d_physics/layer_3="Enemies"
+2d_physics/layer_6="MapSurfaces"
+2d_physics/layer_7="PLAYER"

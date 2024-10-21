@@ -8,8 +8,6 @@ class_name Car
 var health = 100
 var enable_fire = true
 
-
-
 # drift_blast attributes
 var blast_scale: float = 1.0
 var drift_blast_damage: float = 20
@@ -88,8 +86,8 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("right"):
 			rotation += turn_rate * delta  # turn right based on speed
 
+	
 	# check if the car is sliding enough to leave skid marks
-
 	var skid_threshold = 400
 	var is_skid = abs(lateral_speed) > skid_threshold
 	if is_skid:
@@ -177,3 +175,7 @@ func do_damage(damage: float) -> void:
 	health -= damage * damage_resistance_mod
 	if health <= 0:
 		dead.emit()
+
+
+func _on_terrain_detector_friction_changed(f: Variant) -> void:
+	linear_damp = 1 / f

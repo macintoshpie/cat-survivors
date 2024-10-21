@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ng4l7hlalck0"]
+[gd_scene load_steps=14 format=3 uid="uid://ng4l7hlalck0"]
 
 [ext_resource type="Texture2D" uid="uid://c7gx8wh74cear" path="res://art/car.png" id="1_e2ty2"]
 [ext_resource type="Script" path="res://car.gd" id="1_ybh8d"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://vrwuvftwy08v" path="res://bull_horns.tscn" id="5_m8b8c"]
 [ext_resource type="Script" path="res://gun2.gd" id="5_wnsvc"]
 [ext_resource type="Script" path="res://forward_gun.gd" id="6_uqf3u"]
+[ext_resource type="Script" path="res://terrain_detector.gd" id="7_7wij5"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lli3s"]
 bounce = 0.5
@@ -29,6 +30,9 @@ animations = [{
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tp0by"]
 radius = 2224.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1tsoi"]
+size = Vector2(144, 160)
 
 [node name="Car" type="RigidBody2D"]
 mass = 10.0
@@ -58,7 +62,7 @@ scale = Vector2(10, 10)
 sprite_frames = SubResource("SpriteFrames_vywh8")
 
 [node name="HitBoxArea" type="Area2D" parent="."]
-collision_layer = 0
+collision_layer = 64
 collision_mask = 4
 
 [node name="HitBox" type="CollisionShape2D" parent="HitBoxArea"]
@@ -91,6 +95,14 @@ script = ExtResource("6_uqf3u")
 
 [node name="ShootTimer" type="Timer" parent="ForwardGun"]
 
+[node name="TerrainDetector" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 32
+script = ExtResource("7_7wij5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TerrainDetector"]
+shape = SubResource("RectangleShape2D_1tsoi")
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]
 [connection signal="area_entered" from="HitBoxArea" to="." method="_on_hit_box_area_area_entered"]
@@ -100,3 +112,5 @@ script = ExtResource("6_uqf3u")
 [connection signal="hit" from="BullHorns" to="." method="_on_bull_horns_hit"]
 [connection signal="timeout" from="RadialGun/ShootTimer" to="RadialGun" method="_on_shoot_timer_timeout"]
 [connection signal="timeout" from="ForwardGun/ShootTimer" to="ForwardGun" method="_on_shoot_timer_timeout"]
+[connection signal="body_shape_entered" from="TerrainDetector" to="TerrainDetector" method="_on_body_shape_entered"]
+[connection signal="friction_changed" from="TerrainDetector" to="." method="_on_terrain_detector_friction_changed"]

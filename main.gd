@@ -31,7 +31,6 @@ func _ready() -> void:
 	width = size[0]
 	height = size[1]
 
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	$CanvasLayer/LastLap.text = "Health: " + str(car.health)
