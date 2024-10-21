@@ -27,10 +27,7 @@ func _physics_process(delta: float) -> void:
 		scale = Vector2.ZERO
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
-	print("fire damage")
-	print(area)
 	if Enemy.is_enemy(area):
-		print("DOING ENEMY DAMAGE")
 		var enemy: Enemy = area
 		enemy.do_damage(damage)
 

@@ -12,7 +12,6 @@ func _process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	prints("Coin collsison")
 	if body.name == "Car":
 		body.emit_signal("collected_coin")
 		queue_free()

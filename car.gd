@@ -43,7 +43,6 @@ func get_current_speed_frac() -> float:
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
-	prints("Hello world!!")
 	linear_damp = 1.0
 
 	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)
@@ -116,11 +115,6 @@ func _physics_process(delta: float) -> void:
 			add_fire()
 
 func _on_body_entered(body: Node2D) -> void:
-	var damage = body.get_meta("damage")
-	prints("Collision...")
-	if damage != null:
-		prints("damage!")
-
 	hit_wall.emit()
 	leave_skid_mark()
 
@@ -140,12 +134,6 @@ func leave_skid_mark() -> void:
 	skid_mark.self_modulate = Color(0, 0, 0, float(drift_count) / float(drift_count_max))
 	# add the skid mark to the scene tree
 	get_parent().add_child(skid_mark)
-
-func _on_body_shape_entered(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) -> void:
-	prints("Body shape entered")
-
-
-
 
 func _on_hit_box_area_area_entered(area: Area2D) -> void:
 	if is_instance_of(area, Enemy):
