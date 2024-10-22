@@ -87,23 +87,32 @@ func add_gate(pos: Vector2, rot: float) -> void:
 	add_child(gate)
 	gate.connect("activated", _on_gate_activated)
 
-func add_enemy(pos: Vector2) -> void:
-	var enemy: Area2D = enemy_scene.instantiate()
+func instantiate_enemy(pos: Vector2, health: float = 20.0) -> Enemy:
+	var enemy: Enemy = enemy_scene.instantiate()
 	enemy.position = pos
-	add_child(enemy)
-	enemy.connect("died", _on_enemy_died)
+	enemy.health = health
+	
+	return enemy
 
-func _on_enemy_died():
-	increase_score(5)
+func add_enemy_to_scene(enemy: Enemy):
+	add_child(enemy)
+
+func _on_enemy_died(enemy: Enemy):
+	return func() -> void:
+		increase_score(enemy.score_value)
 
 func _on_spawn_enemy_timeout() -> void:
+	var pos = random_enemy_pos()
+	var enemy = instantiate_enemy(pos)
+	link_enemy_died_callback(enemy, _on_enemy_died(enemy))
+	add_enemy_to_scene(enemy)
+
+func random_enemy_pos():
 	var radius = max(width, height)
 	var angle = randf() * PI * 2
 	var x = cos(angle) * radius
 	var y = sin(angle) * radius
-	var pos = Vector2(x, y) + car.position # spawn relative to car's position
-	add_enemy(pos)
-
+	return Vector2(x, y) + car.position # spawn relative to car's position
 
 
 func increase_score(amt: int):
@@ -133,3 +142,20 @@ func _on_health_button_pressed() -> void:
 
 func _on_difficulty_timer_timeout() -> void:
 	$SpawnEnemy.timeout = $SpawnEnemy.timeout * 0.85
+
+func _on_super_enemy_died(enemy: Enemy) -> Callable:
+	return func() -> void:
+		# TODO: do other super enemy stuff
+		# But maybe this stuff should live in the enemy class. not sure
+		_on_enemy_died(enemy).call()
+
+func _on_spawn_super_enemy_timeout() -> void:
+	var pos = random_enemy_pos()
+	var enemy = instantiate_enemy(pos, 50)
+	enemy.score_value = 100
+	enemy.modulate = Color(1, 0, 0)
+	link_enemy_died_callback(enemy, _on_super_enemy_died(enemy))
+	add_enemy_to_scene(enemy)
+
+func link_enemy_died_callback(enemy, callback: Callable):
+	enemy.connect("died", callback)

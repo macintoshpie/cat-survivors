@@ -43,9 +43,6 @@ func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	linear_damp = 1.0
 
-	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)
-
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
 	var is_handbraking = Input.is_action_pressed("handbrake")
@@ -145,7 +142,6 @@ func upgrade(shoot_interval_fraction: float, bullet_damage_fraction: float, blas
 	$Gun/ShootTimer.wait_time = $Gun/ShootTimer.wait_time * 0.75
 	
 	blast_scale = blast_scale * blast_scale_fraction
-	$DriftBlast/BlastRadius.scale = Vector2(blast_scale, blast_scale)
 
 func add_health(amount: float) -> void:
 	health += amount

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://ng4l7hlalck0"]
+[gd_scene load_steps=13 format=3 uid="uid://ng4l7hlalck0"]
 
 [ext_resource type="Texture2D" uid="uid://c7gx8wh74cear" path="res://art/car.png" id="1_e2ty2"]
 [ext_resource type="Script" path="res://car.gd" id="1_ybh8d"]
@@ -10,9 +10,6 @@
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lli3s"]
 bounce = 0.5
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_b3fnc"]
-size = Vector2(816, 1041)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_isvwl"]
 size = Vector2(160, 144)
@@ -32,7 +29,7 @@ animations = [{
 radius = 2224.01
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1tsoi"]
-size = Vector2(144, 160)
+size = Vector2(104, 112)
 
 [node name="Car" type="RigidBody2D"]
 mass = 10.0
@@ -42,16 +39,6 @@ contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_ybh8d")
 speed = 400
-
-[node name="DriftBlast" type="Node2D" parent="."]
-
-[node name="BlastRadius" type="Area2D" parent="DriftBlast"]
-collision_layer = 0
-collision_mask = 4
-
-[node name="BlastCollision" type="CollisionShape2D" parent="DriftBlast/BlastRadius"]
-position = Vector2(0, 520)
-shape = SubResource("RectangleShape2D_b3fnc")
 
 [node name="PhysicsBox" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_isvwl")

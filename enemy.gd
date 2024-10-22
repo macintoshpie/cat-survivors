@@ -4,6 +4,7 @@ class_name Enemy
 var speed = 20
 var health = 30
 var damage = 10
+var score_value = 5
 
 signal died
 
