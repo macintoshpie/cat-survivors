@@ -1,0 +1,70 @@
+[gd_scene load_steps=7 format=3 uid="uid://mhlxwrca33f4"]
+
+[ext_resource type="Script" path="res://bomb.gd" id="1_eyo53"]
+[ext_resource type="Texture2D" uid="uid://cmrxn8m6gvnno" path="res://art/flame.png" id="1_yhuob"]
+[ext_resource type="Texture2D" uid="uid://boexo46pm6g40" path="res://art/bomb2.png" id="3_no0xw"]
+[ext_resource type="Texture2D" uid="uid://c0v1iqprptwjb" path="res://art/bomb1.png" id="4_uiya1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l4ld1"]
+size = Vector2(384, 384)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8jvo4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_yhuob")
+}],
+"loop": true,
+"name": &"explosion",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_no0xw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_uiya1")
+}],
+"loop": true,
+"name": &"waiting",
+"speed": 5.0
+}]
+
+[node name="Bomb" type="Node2D"]
+script = ExtResource("1_eyo53")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_l4ld1")
+
+[node name="Explode" type="Timer" parent="."]
+one_shot = true
+
+[node name="Despawn" type="Timer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(10, 10)
+sprite_frames = SubResource("SpriteFrames_8jvo4")
+animation = &"waiting"
+frame_progress = 0.834454
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 14
+speed_scale = 2.0
+explosiveness = 1.0
+texture = ExtResource("1_yhuob")
+emission_shape = 1
+emission_sphere_radius = 128.0
+gravity = Vector2(0, 100)
+radial_accel_min = 248.6
+radial_accel_max = 248.6
+scale_amount_min = 2.0
+scale_amount_max = 8.0
+
+[connection signal="timeout" from="Explode" to="." method="_on_explode_timeout"]
+[connection signal="timeout" from="Despawn" to="." method="_on_despawn_timeout"]

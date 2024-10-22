@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ng4l7hlalck0"]
+[gd_scene load_steps=14 format=3 uid="uid://ng4l7hlalck0"]
 
 [ext_resource type="Texture2D" uid="uid://c7gx8wh74cear" path="res://art/car.png" id="1_e2ty2"]
 [ext_resource type="Script" path="res://car.gd" id="1_ybh8d"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://gun2.gd" id="5_wnsvc"]
 [ext_resource type="Script" path="res://forward_gun.gd" id="6_uqf3u"]
 [ext_resource type="Script" path="res://terrain_detector.gd" id="7_7wij5"]
+[ext_resource type="Script" path="res://bomb_dropper.gd" id="7_to1d6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_lli3s"]
 bounce = 0.5
@@ -26,7 +27,7 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tp0by"]
-radius = 2224.01
+radius = 3377.6
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1tsoi"]
 size = Vector2(104, 112)
@@ -50,7 +51,7 @@ sprite_frames = SubResource("SpriteFrames_vywh8")
 
 [node name="HitBoxArea" type="Area2D" parent="."]
 collision_layer = 64
-collision_mask = 4
+collision_mask = 12
 
 [node name="HitBox" type="CollisionShape2D" parent="HitBoxArea"]
 shape = SubResource("RectangleShape2D_isvwl")
@@ -66,7 +67,7 @@ position = Vector2(0, 48)
 shape = SubResource("CircleShape2D_tp0by")
 
 [node name="ShootTimer" type="Timer" parent="Gun"]
-autostart = true
+wait_time = 3.0
 
 [node name="BullHorns" parent="." instance=ExtResource("5_m8b8c")]
 position = Vector2(0, -88)
@@ -75,12 +76,17 @@ position = Vector2(0, -88)
 script = ExtResource("5_wnsvc")
 
 [node name="ShootTimer" type="Timer" parent="RadialGun"]
-autostart = true
 
 [node name="ForwardGun" type="Node2D" parent="."]
 script = ExtResource("6_uqf3u")
 
 [node name="ShootTimer" type="Timer" parent="ForwardGun"]
+
+[node name="BombDropper" type="Node2D" parent="."]
+script = ExtResource("7_to1d6")
+
+[node name="ShootTimer" type="Timer" parent="BombDropper"]
+wait_time = 2.0
 
 [node name="TerrainDetector" type="Area2D" parent="."]
 collision_layer = 0
@@ -93,12 +99,14 @@ shape = SubResource("RectangleShape2D_1tsoi")
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]
 [connection signal="area_entered" from="HitBoxArea" to="." method="_on_hit_box_area_area_entered"]
+[connection signal="area_exited" from="HitBoxArea" to="." method="_on_hit_box_area_area_exited"]
 [connection signal="area_entered" from="Gun/ShootRange" to="Gun" method="_on_shoot_range_area_entered"]
 [connection signal="area_exited" from="Gun/ShootRange" to="Gun" method="_on_shoot_range_area_exited"]
 [connection signal="timeout" from="Gun/ShootTimer" to="Gun" method="_on_shoot_timer_timeout"]
 [connection signal="hit" from="BullHorns" to="." method="_on_bull_horns_hit"]
 [connection signal="timeout" from="RadialGun/ShootTimer" to="RadialGun" method="_on_shoot_timer_timeout"]
 [connection signal="timeout" from="ForwardGun/ShootTimer" to="ForwardGun" method="_on_shoot_timer_timeout"]
+[connection signal="timeout" from="BombDropper/ShootTimer" to="BombDropper" method="_on_shoot_timer_timeout"]
 [connection signal="body_shape_entered" from="TerrainDetector" to="TerrainDetector" method="_on_body_shape_entered"]
 [connection signal="body_shape_exited" from="TerrainDetector" to="TerrainDetector" method="_on_body_shape_exited"]
 [connection signal="friction_changed" from="TerrainDetector" to="." method="_on_terrain_detector_friction_changed"]

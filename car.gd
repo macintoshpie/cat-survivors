@@ -5,8 +5,10 @@ class_name Car
 @export var turn_speed: int = 40
 @export var turn_speed_2: int = 1000000
 
+var max_health = 100
 var health = 100
-var enable_fire = true
+var enable_fire = false
+var max_fire_duration_secs = 2
 
 # drift_blast attributes
 var blast_scale: float = 1.0
@@ -16,6 +18,40 @@ var drift_blast_damage: float = 20
 var damage_resistance_mod = 0.8 # decrease value to increase resistance
 
 signal dead
+signal hit_gate(gate: Gate)
+signal health_changed
+
+enum Weapons {
+	GUN,
+	DRIFT_BLAST,
+	RADIAL_GUN,
+	FORWARD_GUN,
+	BOMB_DROPPER,
+}
+var equipped_weapons: Array = []
+var unequipped_weapons: Array = [Weapons.GUN, Weapons.DRIFT_BLAST, Weapons.RADIAL_GUN, Weapons.FORWARD_GUN, Weapons.BOMB_DROPPER]
+const WeaponDetails = {
+	Weapons.GUN: {
+		"name": "Gun",
+		"weapon": Weapons.GUN,
+	},
+	Weapons.DRIFT_BLAST: {
+		"name": "Drift Blast",
+		"weapon": Weapons.DRIFT_BLAST,
+	},
+	Weapons.RADIAL_GUN: {
+		"name": "Radial Gun",
+		"weapon": Weapons.RADIAL_GUN,
+	},
+	Weapons.FORWARD_GUN: {
+		"name": "Forward Gun",
+		"weapon": Weapons.FORWARD_GUN,
+	},
+	Weapons.BOMB_DROPPER: {
+		"name": "Bomb Dropper",
+		"weapon": Weapons.BOMB_DROPPER,
+	},
+}
 
 var skid_mark_scene = preload("res://skid_mark.tscn") as PackedScene
 var fire_scene = preload("res://fire.tscn") as PackedScene
@@ -106,7 +142,7 @@ func _physics_process(delta: float) -> void:
 		apply_central_force(forward_vector * drift_boost_speed * drift_boost_amount)
 		drift_boost_amount = lerpf(drift_boost_amount, 0.0, delta*drift_boost_decay)
 
-		if randf() < 0.5:
+		if randf() < 0.5 and enable_fire:
 			add_fire()
 
 func _on_body_entered(body: Node2D) -> void:
@@ -133,18 +169,38 @@ func leave_skid_mark() -> void:
 func _on_hit_box_area_area_entered(area: Area2D) -> void:
 	if is_instance_of(area, Enemy):
 		var enemy: Enemy = area
-		do_damage(enemy.damage)
+		#do_damage(enemy.damage)
+		enemy.attack(self)
+	if is_instance_of(area, Gate):
+		print("HIT GATE ", area)
+		hit_gate.emit(area)
 
-func upgrade(shoot_interval_fraction: float, bullet_damage_fraction: float, blast_scale_fraction: float) -> void:
-	# This should be moved into gun probably
-	$Gun.shoot_interval = $Gun.shoot_interval * shoot_interval_fraction
-	$Gun.bullet_damage = $Gun.bullet_damage * bullet_damage_fraction
-	$Gun/ShootTimer.wait_time = $Gun/ShootTimer.wait_time * 0.75
-	
-	blast_scale = blast_scale * blast_scale_fraction
+func _on_hit_box_area_area_exited(area: Area2D) -> void:
+	if is_instance_of(area, Enemy):
+		var enemy: Enemy = area
+		enemy.stop_attack()
+
+func upgrade(u: Weapons) -> void:
+	var was_equipped = false
+	match u:
+		Weapons.GUN:
+			$Gun.upgrade()
+		Weapons.RADIAL_GUN:
+			$RadialGun.upgrade()
+		Weapons.DRIFT_BLAST:
+			enable_fire = true
+		Weapons.FORWARD_GUN:
+			$ForwardGun.upgrade()
+		Weapons.BOMB_DROPPER:
+			$BombDropper.upgrade()
+
+	if u in unequipped_weapons:
+		var weapon = unequipped_weapons.pop_at(unequipped_weapons.find(u))
+		equipped_weapons.append(weapon)
 
 func add_health(amount: float) -> void:
 	health += amount
+	health_changed.emit()
 
 func add_fire() -> void:
 	var fire: Fire = fire_scene.instantiate()
@@ -155,7 +211,7 @@ func add_fire() -> void:
 	fire.position = rotate_around_point(position + x_offset, position, rotation)
 	fire.min_scale = 0.0
 	fire.max_scale = randf_range(4.0, 8.0)
-	fire.duration_secs = randf_range(1, 2)
+	fire.duration_secs = randf_range(max_fire_duration_secs - 1, max_fire_duration_secs)
 	get_parent().add_child(fire)
 
 func _on_bull_horns_hit(enemy: Enemy) -> void:
@@ -171,6 +227,8 @@ func do_damage(damage: float) -> void:
 	health -= damage * damage_resistance_mod
 	if health <= 0:
 		dead.emit()
+
+	health_changed.emit()
 
 
 func _on_terrain_detector_friction_changed(f: Variant) -> void:

@@ -1,7 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://44kh8alhtitg"]
+[gd_scene load_steps=3 format=3 uid="uid://44kh8alhtitg"]
 
 [ext_resource type="Texture2D" uid="uid://bgv5rv5nrotvu" path="res://art/skid.png" id="1_v2pkx"]
+[ext_resource type="Script" path="res://skid_mark.gd" id="2_s6wo7"]
 
 [node name="SkidMark" type="Sprite2D"]
 scale = Vector2(10, 10)
 texture = ExtResource("1_v2pkx")
+script = ExtResource("2_s6wo7")
+
+[node name="Despawn" type="Timer" parent="."]
+wait_time = 30.0
+autostart = true
+
+[connection signal="timeout" from="Despawn" to="." method="_on_despawn_timeout"]

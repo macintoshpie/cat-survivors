@@ -21,8 +21,6 @@ func _process(delta: float) -> void:
 
 
 func _on_body_shape_entered(body_rid: RID, body: Node2D, body_shape_index: int, local_shape_index: int) -> void:
-	print("ENTERED BODY SHAPE")
-	print(body)
 	_process_tile_map_collision(body, body_rid, "entered")
 
 func _process_tile_map_collision(body: Node2D, body_rid: RID, entered_or_exited: String):

@@ -1,10 +1,129 @@
-[gd_scene load_steps=4 format=3 uid="uid://lvicr1nbu8cq"]
+[gd_scene load_steps=17 format=3 uid="uid://lvicr1nbu8cq"]
 
 [ext_resource type="Script" path="res://enemy.gd" id="1_dlms2"]
-[ext_resource type="Texture2D" uid="uid://b7s6d87yqxay0" path="res://art/cone.png" id="1_eko82"]
+[ext_resource type="Texture2D" uid="uid://ckourj02aqgr0" path="res://art/catratdog.png" id="2_v8emw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_acy1t"]
-size = Vector2(136, 160)
+size = Vector2(224, 184)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adrpj"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5vss"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(32, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmtdj"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(64, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65swn"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(0, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n3kvf"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(32, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2fcq"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(64, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_53yxe"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vgudy"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(32, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dc4nq"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(64, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nlund"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(0, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rek8w"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(32, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_46brf"]
+atlas = ExtResource("2_v8emw")
+region = Rect2(64, 224, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fxiry"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adrpj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5vss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qmtdj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5vss")
+}],
+"loop": true,
+"name": &"down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_65swn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n3kvf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j2fcq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n3kvf")
+}],
+"loop": true,
+"name": &"left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_53yxe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vgudy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dc4nq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vgudy")
+}],
+"loop": true,
+"name": &"right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nlund")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rek8w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_46brf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rek8w")
+}],
+"loop": true,
+"name": &"up",
+"speed": 5.0
+}]
 
 [node name="Enemy" type="Area2D"]
 collision_layer = 4
@@ -12,11 +131,15 @@ collision_mask = 3
 script = ExtResource("1_dlms2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-4, 24)
+position = Vector2(0, 36)
 shape = SubResource("RectangleShape2D_acy1t")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(10, 10)
-texture = ExtResource("1_eko82")
+sprite_frames = SubResource("SpriteFrames_fxiry")
+animation = &"right"
+
+[node name="AttackTimer" type="Timer" parent="."]
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="timeout" from="AttackTimer" to="." method="_on_attack_timer_timeout"]

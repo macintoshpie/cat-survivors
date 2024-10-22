@@ -1,7 +1,7 @@
 extends Node2D
 class_name Gun
 
-var enable_gun = true
+var enable_gun = false
 var shoot_interval: float = 1.0
 var bullet_damage: float = 10.0
 
@@ -12,12 +12,15 @@ var homing_bullet_scene = preload("res://homing_bullet.tscn") as PackedScene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# setup gun
-	$ShootTimer.wait_time = shoot_interval
-	if enable_gun:
+	pass
+
+func upgrade():
+	if !enable_gun:
+		enable_gun = true
+		$ShootTimer.wait_time = shoot_interval
 		$ShootTimer.start()
 	else:
-		$ShootTimer.stop()
+		$ShootTimer.wait_time *= 0.85
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -29,7 +32,8 @@ func shoot_at_enemy(enemy: Enemy):
 	bullet.target = enemy
 	bullet.position = global_position
 	bullet.direction = global_position.direction_to(enemy.position)
-	bullet.scale = Vector2(5, 5)
+	bullet.scale = Vector2(2, 2)
+	bullet.modulate = Color(1, 1, 0)
 	bullet.damage = bullet_damage
 
 	get_parent().get_parent().add_child(bullet)

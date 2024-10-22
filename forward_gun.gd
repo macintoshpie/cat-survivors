@@ -1,7 +1,7 @@
 extends Node2D
 class_name ForwardGun
 
-var enable_gun = true
+var enable_gun = false
 var shoot_interval: float = 0.5
 
 var bullet_damage: float = 10.0
@@ -16,13 +16,15 @@ var bullet_scene = preload("res://bullet.tscn") as PackedScene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# setup gun
-	$ShootTimer.wait_time = shoot_interval
-	if enable_gun:
+	pass
+
+func upgrade():
+	if !enable_gun:
+		enable_gun = true
+		$ShootTimer.wait_time = shoot_interval
 		$ShootTimer.start()
 	else:
-		$ShootTimer.stop()
-
+		$ShootTimer.wait_time *= 0.85
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

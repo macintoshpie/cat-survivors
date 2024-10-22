@@ -7,6 +7,8 @@
 size = Vector2(144, 20)
 
 [node name="Gate" type="Area2D"]
+collision_layer = 8
+collision_mask = 0
 script = ExtResource("1_k5tve")
 
 [node name="Line2D" type="Line2D" parent="."]
@@ -17,6 +19,8 @@ script = ExtResource("1_k5tve")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_i3wk5")
+
+[node name="Center" type="Marker2D" parent="."]
 
 [connection signal="activated" from="." to="." method="_on_activated"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

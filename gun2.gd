@@ -5,20 +5,23 @@ var enable_gun = false
 var shoot_interval: float = 1.0
 var bullet_damage: float = 10.0
 
-var point_count = 10
+var point_count: int = 5
 var radius = 100
 
 var bullet_scene = preload("res://bullet.tscn") as PackedScene
 
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	# setup gun
-	$ShootTimer.wait_time = shoot_interval
-	if enable_gun:
+	pass
+
+func upgrade():
+	if !enable_gun:
+		enable_gun = true
+		$ShootTimer.wait_time = shoot_interval
 		$ShootTimer.start()
 	else:
-		$ShootTimer.stop()
-
+		$ShootTimer.wait_time *= 0.85
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
