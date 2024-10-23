@@ -1,4 +1,4 @@
-extends Area2D
+extends RigidBody2D
 class_name Enemy
 
 var speed = 20
@@ -22,7 +22,8 @@ func _physics_process(delta: float) -> void:
 	if player:
 		velocity = position.direction_to(player.position) * speed
 
-	position += velocity
+	move_and_collide(velocity)
+	#position += velocity
 	
 	if abs(velocity[0]) > abs(velocity[1]):
 		if velocity[0] < 0:
@@ -36,6 +37,7 @@ func _physics_process(delta: float) -> void:
 			$AnimatedSprite2D.play("down")
 
 func _on_area_entered(area: Area2D) -> void:
+	print("Area entered enemy")
 	var parent = area.get_parent()
 	if is_instance_of(parent, Bullet):
 		var bullet: Bullet = parent
@@ -56,9 +58,6 @@ func attack(car: Car) -> void:
 	if randf() < initial_attack_prob:
 		apply_damage_to_target()
 
-	# random delay to attack
-	var start_delay = randf_range(0.0, 1.0)
-	await get_tree().create_timer(start_delay)
 	$AttackTimer.start()
 
 func stop_attack() -> void:
@@ -77,3 +76,15 @@ func apply_damage_to_target():
 		damage_done = damage * 1.5
 
 	target.do_damage(damage_done)
+
+
+func _on_hit_and_attack_area_entered(area: Area2D) -> void:
+	print("hitandattack entered enemy")
+	var parent = area.get_parent()
+	if is_instance_of(parent, Bullet):
+		var bullet: Bullet = parent
+		do_damage(bullet.damage)
+		bullet.queue_free()
+	if is_instance_of(parent, Bomb):
+		var bomb: Bomb = parent
+		do_damage(bomb.damage)

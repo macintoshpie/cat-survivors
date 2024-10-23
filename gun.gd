@@ -39,13 +39,18 @@ func shoot_at_enemy(enemy: Enemy):
 	get_parent().get_parent().add_child(bullet)
 
 func _on_shoot_range_area_entered(area: Area2D) -> void:
-	if is_instance_of(area, Enemy):
-		enemies.append(area)
+	var parent = area.get_parent()
+	if is_instance_of(parent, Enemy):
+		enemies.append(parent)
 
 
 func _on_shoot_range_area_exited(area: Area2D) -> void:
+	var parent = area.get_parent()
+	if !is_instance_of(parent, Enemy):
+		return
+
 	enemies = enemies.filter(func(enemy: Enemy):
-		return enemy.get_instance_id() != area.get_instance_id()
+		return enemy.get_instance_id() != parent.get_instance_id()
 	)
 
 
@@ -53,6 +58,9 @@ func _on_shoot_timer_timeout() -> void:
 	var closest_enemy = null
 	var dist = INF
 	for enemy in enemies:
+		if !is_instance_valid(enemy):
+			continue
+
 		var enemy_dist = enemy.position.distance_to(position)
 		if enemy_dist < dist:
 			closest_enemy = enemy

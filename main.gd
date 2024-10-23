@@ -218,25 +218,12 @@ func link_enemy_died_callback(enemy, callback: Callable):
 func get_upgrade_options(max_equip: int):
 	var max_upgrade_options = 3
 	var options = []
-	var num_unequipped = len(car.unequipped_weapons)
-	if  num_unequipped > 0:
-		print("NUM GETTING", min(max_equip, max_upgrade_options))
-		var rand_weapons = pick_random(car.unequipped_weapons, min(max_equip, max_upgrade_options))
-		print("NUM GOT", len(rand_weapons))
-		for weapon in rand_weapons:
-			var option = {
-				"name": Car.WeaponDetails[weapon].name,
-				"weapon": weapon,
-				"action": "Equip"
-			}
-			options.append(option)
-
-	var rand_upgrades = pick_random(car.equipped_weapons, max_upgrade_options - len(options))
-	for weapon in rand_upgrades: 
+	var rand_weapons = pick_random(car.all_weapons, max_upgrade_options)
+	for weapon in rand_weapons:
 		var option = {
 			"name": Car.WeaponDetails[weapon].name,
 			"weapon": weapon,
-			"action": "Upgrade"
+			"action": "Upgrade" if weapon in car.equipped_weapons else "Equip"
 		}
 		options.append(option)
 

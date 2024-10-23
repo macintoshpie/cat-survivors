@@ -27,9 +27,17 @@ enum Weapons {
 	RADIAL_GUN,
 	FORWARD_GUN,
 	BOMB_DROPPER,
+	HORNS,
 }
 var equipped_weapons: Array = []
-var unequipped_weapons: Array = [Weapons.GUN, Weapons.DRIFT_BLAST, Weapons.RADIAL_GUN, Weapons.FORWARD_GUN, Weapons.BOMB_DROPPER]
+var all_weapons: Array = [
+	Weapons.GUN,
+	Weapons.DRIFT_BLAST,
+	Weapons.RADIAL_GUN,
+	Weapons.FORWARD_GUN,
+	Weapons.BOMB_DROPPER,
+	Weapons.HORNS
+]
 const WeaponDetails = {
 	Weapons.GUN: {
 		"name": "Gun",
@@ -50,6 +58,10 @@ const WeaponDetails = {
 	Weapons.BOMB_DROPPER: {
 		"name": "Bomb Dropper",
 		"weapon": Weapons.BOMB_DROPPER,
+	},
+	Weapons.HORNS: {
+		"name": "Bull Horns",
+		"weapon": Weapons.HORNS,
 	},
 }
 
@@ -167,17 +179,20 @@ func leave_skid_mark() -> void:
 	get_parent().add_child(skid_mark)
 
 func _on_hit_box_area_area_entered(area: Area2D) -> void:
-	if is_instance_of(area, Enemy):
-		var enemy: Enemy = area
-		#do_damage(enemy.damage)
-		enemy.attack(self)
 	if is_instance_of(area, Gate):
 		print("HIT GATE ", area)
 		hit_gate.emit(area)
+		return
+
+	var parent = area.get_parent()
+	if is_instance_of(parent, Enemy):
+		var enemy: Enemy = parent
+		enemy.attack(self)
 
 func _on_hit_box_area_area_exited(area: Area2D) -> void:
-	if is_instance_of(area, Enemy):
-		var enemy: Enemy = area
+	var parent = area.get_parent()
+	if is_instance_of(parent, Enemy):
+		var enemy: Enemy = parent
 		enemy.stop_attack()
 
 func upgrade(u: Weapons) -> void:
@@ -193,10 +208,11 @@ func upgrade(u: Weapons) -> void:
 			$ForwardGun.upgrade()
 		Weapons.BOMB_DROPPER:
 			$BombDropper.upgrade()
+		Weapons.HORNS:
+			$BullHorns.upgrade()
 
-	if u in unequipped_weapons:
-		var weapon = unequipped_weapons.pop_at(unequipped_weapons.find(u))
-		equipped_weapons.append(weapon)
+	if u not in equipped_weapons:
+		equipped_weapons.append(u)
 
 func add_health(amount: float) -> void:
 	health += amount
@@ -213,9 +229,6 @@ func add_fire() -> void:
 	fire.max_scale = randf_range(4.0, 8.0)
 	fire.duration_secs = randf_range(max_fire_duration_secs - 1, max_fire_duration_secs)
 	get_parent().add_child(fire)
-
-func _on_bull_horns_hit(enemy: Enemy) -> void:
-	enemy.do_damage(1000)
 
 func map_value(value: float, input_start: float, input_end: float, output_start: float, output_end: float) -> float:
 	return lerp(output_start, output_end, (value - input_start) / (input_end - input_start))

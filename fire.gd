@@ -26,11 +26,17 @@ func _physics_process(delta: float) -> void:
 	else:
 		scale = Vector2.ZERO
 
-func _on_area_2d_area_entered(area: Area2D) -> void:
-	if Enemy.is_enemy(area):
-		var enemy: Enemy = area
-		enemy.do_damage(damage)
+#func _on_area_2d_area_entered(area: Area2D) -> void:
+	#if Enemy.is_enemy(area):
+		#var enemy: Enemy = area
+		#enemy.do_damage(damage)
 
 
 func _on_despawn_timeout() -> void:
 	queue_free()
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	if is_instance_of(body, Enemy):
+		var enemy: Enemy = body
+		enemy.do_damage(damage)

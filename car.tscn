@@ -36,6 +36,7 @@ size = Vector2(104, 112)
 mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_lli3s")
 gravity_scale = 0.0
+lock_rotation = true
 contact_monitor = true
 max_contacts_reported = 1
 script = ExtResource("1_ybh8d")
@@ -103,7 +104,6 @@ shape = SubResource("RectangleShape2D_1tsoi")
 [connection signal="area_entered" from="Gun/ShootRange" to="Gun" method="_on_shoot_range_area_entered"]
 [connection signal="area_exited" from="Gun/ShootRange" to="Gun" method="_on_shoot_range_area_exited"]
 [connection signal="timeout" from="Gun/ShootTimer" to="Gun" method="_on_shoot_timer_timeout"]
-[connection signal="hit" from="BullHorns" to="." method="_on_bull_horns_hit"]
 [connection signal="timeout" from="RadialGun/ShootTimer" to="RadialGun" method="_on_shoot_timer_timeout"]
 [connection signal="timeout" from="ForwardGun/ShootTimer" to="ForwardGun" method="_on_shoot_timer_timeout"]
 [connection signal="timeout" from="BombDropper/ShootTimer" to="BombDropper" method="_on_shoot_timer_timeout"]

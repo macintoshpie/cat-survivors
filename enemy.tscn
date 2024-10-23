@@ -1,7 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://lvicr1nbu8cq"]
+[gd_scene load_steps=19 format=3 uid="uid://lvicr1nbu8cq"]
 
 [ext_resource type="Script" path="res://enemy.gd" id="1_dlms2"]
 [ext_resource type="Texture2D" uid="uid://ckourj02aqgr0" path="res://art/catratdog.png" id="2_v8emw"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_holni"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_acy1t"]
 size = Vector2(224, 184)
@@ -125,12 +127,18 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Enemy" type="Area2D"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_ls50m"]
+radius = 168.19
+
+[node name="Enemy" type="RigidBody2D"]
 collision_layer = 4
-collision_mask = 3
+collision_mask = 7
+physics_material_override = SubResource("PhysicsMaterial_holni")
+gravity_scale = 0.0
+lock_rotation = true
 script = ExtResource("1_dlms2")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="PhysicsBox" type="CollisionShape2D" parent="."]
 position = Vector2(0, 36)
 shape = SubResource("RectangleShape2D_acy1t")
 
@@ -141,5 +149,12 @@ animation = &"right"
 
 [node name="AttackTimer" type="Timer" parent="."]
 
-[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[node name="HitAndAttack" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitAndAttack"]
+shape = SubResource("CircleShape2D_ls50m")
+
 [connection signal="timeout" from="AttackTimer" to="." method="_on_attack_timer_timeout"]
+[connection signal="area_entered" from="HitAndAttack" to="." method="_on_hit_and_attack_area_entered"]
